@@ -1,0 +1,29 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  generateName: clone-build-push-run-
+spec:
+  pipelineRef:
+    name: clone-build-push
+  podTemplate:
+    securityContext:
+      fsGroup: 65532
+  workspaces:
+  - name: shared-data
+    emptyDir: {}
+    # volumeClaimTemplate:
+    #  spec:
+    #    accessModes:
+    #    - ReadWriteOnce
+    #    resources:
+    #      requests:
+    #        storage: 1Gi
+  params:
+  - name: repo-url
+    value: https://github.com/noumanxgrid/kube-front  # Replace with your Git repo URL
+  - name: image-reference
+    value: n0man2ahmed/tektoncicd  # Replace with your Docker image reference
+    # - name: dockerfile-path
+    #   value: $(workspaces.source.path)/Dockerfile   # Replace with your Dockerfile path
+
+

@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: appfront
+  template:
+    metadata:
+      labels:
+        app: appfront
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: minikube-m02
+      containers:
+      - name: react-app-container
+        image: n0man2ahmed/tektoncicd:latest
+        ports:
+        - containerPort: 3000
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+spec:
+  selector:
+    app: appfront
+  ports:
+  - protocol: TCP
+    port: 3000 # The port your React app listens on inside the container
+    targetPort: 3000 # The port your React app listens on inside the pod
+  type: NodePort

@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.backend.deployname }}
+spec:
+  replicas: {{ .Values.backend.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.backend.labels.app }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.backend.labels.app }}
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: {{ .Values.backend.affinity_value }}
+      containers:
+        - name: {{ .Values.backend.container_name }}
+          image: {{ .Values.backend.image }}
+          ports:
+            - containerPort: {{ .Values.backend.container_port }}
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: secret
+                  key: postgres-user
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: secret
+                  key: postgres-password
+            - name: POSTGRES_ENDPOINT
+              value: postgres-service
+            - name: POSTGRES_PORT
+              value: "5432"
+            - name: POSTGRES_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: secret
+                  key: postgres-user
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.backend.deployname }}
+spec:
+  selector:
+    app: {{ .Values.backend.labels.app }}
+  ports:
+    - protocol: TCP
+      port: {{ .Values.backend.container_port }}
+      targetPort: {{ .Values.backend.container_port }}
+  type: {{ .Values.backend.service_type }}
+

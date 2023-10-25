@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: myapp-argo-application
+  namespace: argocd
+spec:
+  project: default
+
+  source:
+    path: kubeapp      
+    repoURL: https://github.com/noumanxgrid/kube-front.git
+    targetRevision: HEAD
+    helm:
+       releaseName: demoapp
+  destination: 
+    server: https://kubernetes.default.svc
+    namespace: kubeapp
+
+  syncPolicy:
+    syncOptions:
+    - CreateNamespace=true
+
+    automated:
+      selfHeal: true
+      prune: true
+

@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.frontend.deployname }}
+spec:
+  replicas: {{ .Values.frontend.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.frontend.labels.app }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.frontend.labels.app }}
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: {{ .Values.frontend.affinity_value }}
+      containers:
+      - name: {{ .Values.frontend.container_name }}
+        image: {{ .Values.frontend.image }}
+        ports:
+        - containerPort: {{ .Values.frontend.container_port }}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.frontend.deployname }}
+spec:
+  selector:
+    app: {{ .Values.frontend.labels.app }}
+  ports:
+  - protocol: TCP
+    port: {{ .Values.frontend.container_port }} # The port your React app listens on inside the container
+    targetPort: {{ .Values.frontend.container_port }} # The port your React app listens on inside the pod
+  type: NodePort
+

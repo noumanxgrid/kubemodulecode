@@ -1,0 +1,53 @@
+# Default values for kubeapp.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+
+
+db:
+ deployname: postgres-deployment
+ labels:
+  app: postgres
+ replicas: 1
+ affinity_key: kubernetes.io/hostname
+ affinity_value: minikube-m04
+ image: postgres:latest
+ container_name: postgres
+ container_port: 5432
+ secret_name: database
+ var_username: POSTGRES_USER
+ secret_key_user: DB_USER
+ var_password: POSTGRES_PASSWORD
+ secret_key_pass: DB_PASSWORD
+ var_db_name: POSTGRES_DB
+ var_db_value: demodb
+ secret_db_pass: YWRtaW4=
+ secret_db_user: cG9zdGdyZXMxMjM0
+
+backend:
+ deployname: backend
+ labels:
+  app: backend
+ replicas: 2
+ affinity_key: kubernetes.io/hostname
+ affinity_value: minikube-m03
+ image: hamzaarshad10/backend:latest
+ container_name: backend
+ container_port: 8080
+ var_endpoint: POSTGRES_ENDPOINT
+ var_portname: POSTGRES_PORT
+ var_username: POSTGRES_USER
+ var_password: POSTGRES_PASSWORD
+ var_dbname: POSTGRES_DB
+
+frontend:
+ deployname: frontend
+ labels:
+  app: frontend
+ replicas: 2
+ affinity_key: kubernetes.io/hostname
+ affinity_value: minikube-m02
+ image: n0man2ahmed/tektoncicd:latest
+ container_name: frontend
+ container_port: 3000
+ val_nodeport: 30036
